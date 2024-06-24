@@ -1,5 +1,3 @@
-# TODO: Add Total Count
-# TODO: Make it so that the line goes back down to 0 on days with no messages
 import json
 import os
 import shutil
@@ -44,7 +42,7 @@ if (not package_cached):
 
 
 channel_id = easygui.enterbox(msg="Please paste the user's channel id :>", title='User ID', default='', strip=True, image=None, root=None)
-graph_title = 'Message Data for ' + easygui.enterbox(msg="✨ What's their nickname? ✨", title='Nickname', default='', strip=True, image=None, root=None)
+graph_title = 'Message Data for ' + easygui.enterbox(msg="✨ What's their nickname? ✨", title='Nickname', default='', strip=True, image=None, root=None) + ". Total Messages: "
 json_filepath = f"messages/" + "c" + channel_id + "/messages.json"
 total_messages = 0
 
@@ -82,8 +80,8 @@ for message in data:
 
     if x_values[len(x_values) - 1] == timestamp:
         y_values[len(x_values) - 1] += 1
+        total_messages += 1
         continue
-    
     x_values.append(message["Timestamp"][:10])
     y_values.append(1)
 
@@ -94,11 +92,11 @@ fig, ax = plt.subplots(layout='constrained', figsize=window_size, facecolor=(bg_
 fig = pylab.gcf() 
 
 # Create the Line itself 
-ax.plot(x_values, y_values, color=line_color, lw=line_width_px)
+ax.bar(x_values, y_values, color=line_color, lw=line_width_px)
 
 # Name our Graph
 fig.canvas.manager.set_window_title(graph_title)
-plt.title(graph_title, loc='center', color=label_color)
+plt.title(graph_title + str(total_messages), loc='center', color=label_color)
 
 # Hide the "box" around the graph
 ax.spines.left.set_visible(False)
