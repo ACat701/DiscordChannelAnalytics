@@ -1,6 +1,8 @@
 # TODO: Add Total Count
 # TODO: Make it so that the line goes back down to 0 on days with no messages
 import json
+import os
+import shutil
 import zipfile
 
 import easygui
@@ -10,11 +12,41 @@ import matplotlib.ticker as ticker
 import numpy as np
 import pylab
 
-# -- Global Variables --
-package_filepath = "package.zip"
+package_filepath = ""
+package_cached = False
+
+# Check that a given file is a .zip and has a messages folder inside of it. If it is, return the name.
+def check_package_validity(name):
+    # Check if it is a zip file
+    if name.endswith(".zip"):
+        z = zipfile.ZipFile(name)
+        if "messages/" in [member.filename for member in z.infolist()]:
+            return name
+    return ""
+
+# Determine if there is a valid package in the directory
+for filename in os.listdir('./'):
+    if (package_filepath == ""):
+        package_filepath = check_package_validity(filename)
+    
+package_cached = (package_filepath != "")
+
+# Creating a new cached package
+if (not package_cached):
+    # Prompt the user for a valid zip file until one is provided
+    while (package_filepath == ""):
+        temp = easygui.fileopenbox(title="Please provide your data package!", filetypes=".zip")
+        package_filepath = check_package_validity(temp)
+        
+    # Copy the file to this directory
+    shutil.copy(package_filepath, './')
+    package_filepath = "./" + temp[temp.rindex("\\"):]
+
+
 channel_id = easygui.enterbox(msg="Please paste the user's channel id :>", title='User ID', default='', strip=True, image=None, root=None)
 graph_title = 'Message Data for ' + easygui.enterbox(msg="✨ What's their nickname? ✨", title='Nickname', default='', strip=True, image=None, root=None)
 json_filepath = f"messages/" + "c" + channel_id + "/messages.json"
+total_messages = 0
 
 x_values = [] # X = Timestamp
 y_values = [] # Y = Message Count
@@ -58,8 +90,8 @@ for message in data:
 # Understanding from here gets partially thrown out of the window
 x_values = np.asarray(x_values, dtype='datetime64[s]')
 
-fig, ax = plt.subplots(layout='constrained', figsize=window_size, facecolor=(bg_color))  # TODO: UNDERSTAND THIS LINE
-fig = pylab.gcf() # TODO: UNDERSTAND THIS LINE
+fig, ax = plt.subplots(layout='constrained', figsize=window_size, facecolor=(bg_color))  
+fig = pylab.gcf() 
 
 # Create the Line itself 
 ax.plot(x_values, y_values, color=line_color, lw=line_width_px)
@@ -82,7 +114,6 @@ ax.xaxis.set_major_formatter(mdates.DateFormatter('%d'))
 ax.xaxis.set_minor_locator(ticker.MultipleLocator(2))
 
 # Secondary Axis (Months)
-# TODO: UNDERSTAND ALL OF THIS BC RUHMIT DID IT
 sec = ax.secondary_xaxis(location=-0.03)
 sec.xaxis.set_major_locator(mdates.MonthLocator(bymonthday=1))
 sec.xaxis.set_major_formatter(mdates.DateFormatter('  %b'))
