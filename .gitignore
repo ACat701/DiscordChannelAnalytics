@@ -1,3 +1,2 @@
-# Hide Data Package Files #
-.zip
-./messages
+*.zip
+*messages
