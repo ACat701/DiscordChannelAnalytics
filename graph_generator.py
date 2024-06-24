@@ -49,9 +49,14 @@ total_messages = 0
 x_values = [] # X = Timestamp
 y_values = [] # Y = Message Count
 
-# Formatting hell!
-plt.rcParams["font.family"] = "Arial Rounded MT Bold"
+# Try to use Arial Rounded MT Bold if the user has it installed. Otherwise, use a default windows font
+try:
+    plt.rcParams["font.family"] = "Arial Rounded MT Bold"
+except:
+    plt.rcParams["font.family"] = "Verdana"
+
 # Nord Colors :>
+# https://www.nordtheme.com/
 bg_color = '#2e3440'
 line_color = '#5e81ac'
 face_color = "#3b4252"
@@ -59,7 +64,6 @@ tick_color = '#8fbcbb'
 label_color = '#88c0d0'
 line_width_px = 2;
 window_size = (13, 7)
-# -- Global Variables --
 
 # Import and Extract that zipfile. This makes a new folder and saves it to the location that this file is run from
 with zipfile.ZipFile(package_filepath, 'r') as zip_ref:
@@ -85,13 +89,12 @@ for message in data:
     x_values.append(message["Timestamp"][:10])
     y_values.append(1)
 
-# Understanding from here gets partially thrown out of the window
 x_values = np.asarray(x_values, dtype='datetime64[s]')
 
 fig, ax = plt.subplots(layout='constrained', figsize=window_size, facecolor=(bg_color))  
 fig = pylab.gcf() 
 
-# Create the Line itself 
+# Create the Bars  
 ax.bar(x_values, y_values, color=line_color, lw=line_width_px)
 
 # Name our Graph
