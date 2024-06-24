@@ -42,18 +42,14 @@ if (not package_cached):
 
 
 channel_id = easygui.enterbox(msg="Please paste the user's channel id :>", title='User ID', default='', strip=True, image=None, root=None)
-graph_title = 'Message Data for ' + easygui.enterbox(msg="✨ What's their nickname? ✨", title='Nickname', default='', strip=True, image=None, root=None) + ". Total Messages: "
+graph_title = 'Message Data for ' + easygui.enterbox(msg="✨ What's their nickname? ✨", title='Nickname', default='', strip=True, image=None, root=None)
 json_filepath = f"messages/" + "c" + channel_id + "/messages.json"
 total_messages = 0
 
 x_values = [] # X = Timestamp
 y_values = [] # Y = Message Count
 
-# Try to use Arial Rounded MT Bold if the user has it installed. Otherwise, use a default windows font
-try:
-    plt.rcParams["font.family"] = "Arial Rounded MT Bold"
-except:
-    plt.rcParams["font.family"] = "Verdana"
+plt.rcParams["font.family"] = "Arial Rounded MT Bold"
 
 # Nord Colors :>
 # https://www.nordtheme.com/
@@ -99,7 +95,7 @@ ax.bar(x_values, y_values, color=line_color, lw=line_width_px)
 
 # Name our Graph
 fig.canvas.manager.set_window_title(graph_title)
-plt.title(graph_title + str(total_messages), loc='center', color=label_color)
+plt.title(graph_title + " — Total Messages: "+ str(total_messages), loc='center', color=label_color)
 
 # Hide the "box" around the graph
 ax.spines.left.set_visible(False)
